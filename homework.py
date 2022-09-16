@@ -91,9 +91,6 @@ class SportsWalking(Training):
     height_cm - рост спортсмена.
     """
 
-    action: int
-    duration: float
-    weight: float
     height: float
 
     WLK_coeff_1: ClassVar[float] = 0.035
@@ -116,10 +113,7 @@ class Swimming(Training):
     length_pool - длина бассейна (в метрах)
     count_pool - сколько раз пользователь переплыл бассейн
     """
-
-    action: int
-    duration: float
-    weight: float
+    
     length_pool: float
     count_pool: float
 
