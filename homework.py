@@ -83,7 +83,8 @@ class Running(Training):
             * self.MIN_IN_H
         )
 
-@dataclass 
+
+@dataclass
 class SportsWalking(Training):
     """
     Тренировка: спортивная ходьба.
@@ -102,6 +103,7 @@ class SportsWalking(Training):
             * self.WLK_coeff_2
             * self.weight
         ) * (self.duration * self.MIN_IN_H)
+
 
 @dataclass
 class Swimming(Training):
