@@ -83,8 +83,7 @@ class Running(Training):
             * self.MIN_IN_H
         )
 
-
-@dataclass
+@dataclass 
 class SportsWalking(Training):
     """
     Тренировка: спортивная ходьба.
@@ -104,7 +103,6 @@ class SportsWalking(Training):
             * self.weight
         ) * (self.duration * self.MIN_IN_H)
 
-
 @dataclass
 class Swimming(Training):
     """
@@ -113,7 +111,7 @@ class Swimming(Training):
     length_pool - длина бассейна (в метрах)
     count_pool - сколько раз пользователь переплыл бассейн
     """
-    
+
     length_pool: float
     count_pool: float
 
