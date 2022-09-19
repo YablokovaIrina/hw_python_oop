@@ -1,5 +1,5 @@
 from dataclasses import asdict, dataclass
-from typing import Callable, List, ClassVar, Dict
+from typing import Type, List, ClassVar, Dict
 
 
 @dataclass
@@ -28,8 +28,8 @@ class Training:
     """
     Базовый класс тренировки.
     action - количество совершённых действий
-    duration_hour - длительность тренировки
-    weight_kg - вес спортсмена
+    duration - длительность тренировки
+    weight - вес спортсмена
     LEN_STEP - длина шага
     M_IN_KM - константа для перевода значений из метров в километры
     MIN_IN_H - константа для перевода значений из часа в минуты
@@ -70,13 +70,16 @@ class Training:
 class Running(Training):
     """Тренировка: бег."""
 
-    RUN_coeff_1: ClassVar[int] = 18
-    RUN_coeff_2: ClassVar[int] = 20
+    RUN_COEFF_MULTIPLY: ClassVar[int] = 18
+    RUN_COEFF_SUBTRACT: ClassVar[int] = 20
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         return (
-            (self.RUN_coeff_1 * self.get_mean_speed() - self.RUN_coeff_2)
+            (
+                self.RUN_COEFF_MULTIPLY * self.get_mean_speed()
+                - self.RUN_COEFF_SUBTRACT
+            )
             * self.weight
             / self.M_IN_KM
             * self.duration
@@ -88,19 +91,19 @@ class Running(Training):
 class SportsWalking(Training):
     """
     Тренировка: спортивная ходьба.
-    height_cm - рост спортсмена.
+    height - рост спортсмена.
     """
 
     height: float
 
-    WLK_coeff_1: ClassVar[float] = 0.035
-    WLK_coeff_2: ClassVar[float] = 0.029
+    WLK_COEFF_MULTIPLY_1: ClassVar[float] = 0.035
+    WLK_COEFF_MULTIPLY_2: ClassVar[float] = 0.029
 
     def get_spent_calories(self) -> float:
         return (
-            self.WLK_coeff_1 * self.weight
+            self.WLK_COEFF_MULTIPLY_1 * self.weight
             + (self.get_mean_speed() ** 2 // self.height)
-            * self.WLK_coeff_2
+            * self.WLK_COEFF_MULTIPLY_2
             * self.weight
         ) * (self.duration * self.MIN_IN_H)
 
@@ -117,8 +120,8 @@ class Swimming(Training):
     length_pool: float
     count_pool: float
 
-    SWM_coeff_1: ClassVar[float] = 1.1
-    SWM_coeff_2: ClassVar[float] = 2
+    SWM_COEFF_SUM: ClassVar[float] = 1.1
+    SWM_COEFF_MULTIPLY: ClassVar[float] = 2
     LEN_STEP: ClassVar[float] = 1.38
 
     def get_distance(self) -> float:
@@ -134,19 +137,21 @@ class Swimming(Training):
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
         return (
-            (self.get_mean_speed() + self.SWM_coeff_1)
-            * self.SWM_coeff_2
+            (self.get_mean_speed() + self.SWM_COEFF_SUM)
+            * self.SWM_COEFF_MULTIPLY
             * self.weight
         )
 
 
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    training: Dict[str, Callable] = {
+    training: Dict[str, Type[Training]] = {
         "SWM": Swimming,
         "RUN": Running,
         "WLK": SportsWalking,
     }
+    if workout_type not in training:
+        raise KeyError("Тип тренировки не найден.")
     return training[workout_type](*data)
 
 
